@@ -1,0 +1,2 @@
+speech to text considers complete if you stop for a while
+stop button works oncve, but when pressed again stop it doesnt work.
