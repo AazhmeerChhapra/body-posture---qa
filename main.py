@@ -1,32 +1,31 @@
-from flask import Flask, request, jsonify, g
+from flask import Flask, request, jsonify, g ,render_template
 import json
+from dotenv import dotenv_values
+from hugchat import hugchat
+from hugchat.login import Login
 COOKIE_FILE = 'cookies.json'
 Q_FILE = 'question.json'
 A_FILE = 'answer.json'
 
 app = Flask(__name__)
 
+
+    # Return the HTML file located in 'templates/index.html'
 @app.route('/')
 def hello_world():
-    from dotenv import dotenv_values
-    from hugchat import hugchat
-    from hugchat.login import Login
     secrets = dotenv_values('hf.env')
     hf_email = secrets['EMAIL']
     hf_pass = secrets['PASS']
     sign = Login(hf_email, hf_pass)
     cookies = sign.login()
-
-    # Write cookies to file
+    # Write cookies to file (assuming COOKIE_FILE is defined)
     with open(COOKIE_FILE, 'w') as f:
         json.dump(cookies.get_dict(), f)
+    return render_template('index.html')
 
-    return 'Hello, World!'
 
 @app.route('/question_generation/<string:domain>')
-def question_generation(domain="Data Science"):
-    from hugchat import hugchat
-
+def question_generation(domain):
     # Read cookies from file
     try:
         with open(COOKIE_FILE, 'r') as f:
@@ -49,9 +48,8 @@ def question_generation(domain="Data Science"):
     }
     return jsonify(result)
 
-@app.route('/answer_generation/<string:domain>')
-def answer_generation(domain):
-    from hugchat import hugchat
+@app.route('/answer_generation')
+def answer_generation():
 
     try:
         with open(COOKIE_FILE, 'r') as f:
@@ -81,10 +79,9 @@ def answer_generation(domain):
     }
     return jsonify(result)
 
-@app.route('/answer_comparison/<string:user_answer>')
-def answer_comparison(user_answer):
-    from hugchat import hugchat
-
+@app.route('/answer_comparison')
+def answer_comparison():
+    user_answer = request.json.get("user_answers")
     try:
         with open(A_FILE, 'r') as f:
             answers = json.load(f)
@@ -109,4 +106,4 @@ def answer_comparison(user_answer):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True,port=5001)
