@@ -18,7 +18,6 @@ def hello_world():
     hf_pass = secrets['PASS']
     sign = Login(hf_email, hf_pass)
     cookies = sign.login()
-    # Write cookies to file (assuming COOKIE_FILE is defined)
     with open(COOKIE_FILE, 'w') as f:
         json.dump(cookies.get_dict(), f)
     return render_template('index.html')
