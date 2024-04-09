@@ -7,7 +7,7 @@ COOKIE_FILE = 'cookies.json'
 Q_FILE = 'question.json'
 A_FILE = 'answer.json'
 
-app = Flask(__name__)
+app = Flask(__name__,static_url_path='/static')
 
 
     # Return the HTML file located in 'templates/index.html'
